@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#132522">
+    <title>SafarSetu | Multilingual travel translator</title>
+    <meta name="description" content="Translate travel phrases between 40+ Indian, regional, and world languages with SafarSetu's local AI translator.">
+    <script>
+      if (window.location.protocol === "file:") {
+        document.documentElement.classList.add("standalone-file");
+      } else {
+        const stylesheet = document.createElement("link");
+        stylesheet.rel = "stylesheet";
+        stylesheet.href = "/static/style.css";
+        document.head.appendChild(stylesheet);
+      }
+    </script>
+    <style>
+      .standalone-help { display: none; }
+      html.standalone-file { min-height: 100%; background: #f7f6f1; color: #1d2925; font-family: Arial, sans-serif; }
+      html.standalone-file body { display: grid; min-height: 100vh; place-items: center; margin: 0; padding: 24px; }
+      html.standalone-file .standalone-help { display: block; width: min(560px, 100%); padding: 32px; border: 1px solid #e8e7df; border-radius: 18px; background: white; box-shadow: 0 16px 45px rgb(25 42 35 / 10%); line-height: 1.65; }
+      html.standalone-file .standalone-help h1 { margin-top: 0; color: #15583f; }
+      html.standalone-file .standalone-help code { padding: 3px 6px; border-radius: 5px; background: #edf4ee; }
+      html.standalone-file .standalone-help a { display: inline-block; margin-top: 10px; padding: 10px 15px; border-radius: 8px; background: #1d7554; color: white; font-weight: 700; text-decoration: none; }
+      html.standalone-file .shell { display: none; }
+    </style>
+  </head>
+  <body>
+    <section class="standalone-help" aria-labelledby="standalone-title">
+      <h1 id="standalone-title">Open SafarSetu the right way</h1>
+      <p>This file is a Flask template, not a standalone web page. Opening it directly cannot load the language lists, translation service, or app styling.</p>
+      <ol>
+        <li>Open the SafarSetu project folder.</li>
+        <li>Double-click <code>run_safarsetu.bat</code>.</li>
+        <li>Keep the server window open, then use SafarSetu in your browser.</li>
+      </ol>
+      <p>If the app server is already running, open it here:</p>
+      <a href="http://127.0.0.1:5000/">Open SafarSetu</a>
+    </section>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="SafarSetu home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M16 29s10-9.1 10-17A10 10 0 0 0 6 12c0 7.9 10 17 10 17Z" fill="currentColor"/>
+              <path d="M10 14h12m-9 5c0-2 1.3-3.5 3-3.5s3 1.5 3 3.5m-3-3.5V22" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-name">SafarSetu<span class="brand-dot">.</span></span>
+            <span class="brand-tagline">TRAVEL · TRANSLATE · CONNECT</span>
+          </span>
+        </a>
+        <nav class="topbar-right" aria-label="Main navigation">
+          <a class="nav-link" href="#phrases">Phrasebook</a>
+          <span class="language-pill"><span class="live-dot" aria-hidden="true"></span> English <span class="pill-arrow" aria-hidden="true">→</span> <span id="selected-language">हिन्दी</span></span>
+          <a class="sos-nav" href="#emergency-support" aria-label="Open emergency support">SOS</a>
+        </nav>
+      </header>
+
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> THE JOURNEY IS YOURS</p>
+            <h1 id="page-title">Closer to<br>feeling <em>at home.</em></h1>
+            <p class="intro">A few words can take you a long way. Find your voice in any corner of India.</p>
+            <div class="hero-notes">
+              <span><span class="note-icon" aria-hidden="true">✦</span> 40+ languages</span>
+              <span><span class="note-icon shield-icon" aria-hidden="true">✓</span> On-device translation</span>
+            </div>
+          </div>
+
+          <form id="translate-form" class="translator-card">
+            <div class="card-topline">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5h10M9 3v2.5m3.7 0c-.5 3.7-3.1 6.7-7.2 8.5m1.1-5.3c1.2 2 3.1 3.8 5.4 5.1M15 20l3.5-9 3.5 9m-5.8-2.5h4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <div>
+                <p class="card-kicker">YOUR POCKET INTERPRETER</p>
+                <h2>Say it your way</h2>
+              </div>
+              <span class="card-status"><span class="live-dot"></span> READY</span>
+            </div>
+
+            <div class="language-pair">
+              <div class="language-control destination-control">
+                <label for="destination-area">DESTINATION AREA</label>
+                <div class="select-wrap">
+                  <select id="destination-area" aria-label="Destination area">
+                    <option value="">Choose an area for a language suggestion</option>
+                    <optgroup label="States">
+                      {% for area in destination_areas[:28] %}
+                      <option value="{{ area.name }}" data-language="{{ area.language_code }}">{{ area.name }}</option>
+                      {% endfor %}
+                    </optgroup>
+                    <optgroup label="Union territories">
+                      {% for area in destination_areas[28:] %}
+                      <option value="{{ area.name }}" data-language="{{ area.language_code }}">{{ area.name }}</option>
+                      {% endfor %}
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+              <div class="language-control">
+                <label for="target-search">TRANSLATE TO</label>
+                <input class="language-search" id="target-search" type="search" placeholder="Search languages" autocomplete="off">
+                <div class="select-wrap">
+                  <select id="target-language" name="target-language" aria-label="Target language">
+                    {% for group, group_languages in languages|groupby("category") %}
+                    <optgroup label="{{ group }}">
+                      {% for language in group_languages %}
+                      {% if language.code != "en" %}
+                      <option value="{{ language.code }}" data-native-name="{{ language.native_name }}"
+                        data-speech-code="{{ language.speech_code }}"
+                        {% if language.code == "hi" %}selected{% endif %}>
+                        {{ language.name }} — {{ language.native_name }}
+                      </option>
+                      {% endif %}
+                      {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <p class="area-hint" id="area-hint">Choose a destination area for a language suggestion, or select any language directly. Local languages can vary within an area.</p>
+
+            <div class="phrase-label-row">
+              <label for="phrase">YOUR PHRASE</label>
+              <div class="phrase-actions">
+                <button class="voice-button" id="voice-assistant" type="button" aria-pressed="false" aria-describedby="voice-status">
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="7" y="2.5" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 9.5a5.5 5.5 0 0 0 11 0M10 15v2.5m-3 0h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  <span id="voice-label">Speak</span>
+                </button>
+                <button class="clear-button" id="clear-phrase" type="button">Clear</button>
+              </div>
+            </div>
+            <div class="textarea-wrap">
+              <textarea id="phrase" name="phrase" rows="3" maxlength="300"
+                placeholder="Where is the nearest station?" required></textarea>
+              <span class="textarea-count" id="character-count">0 / 300</span>
+            </div>
+            <p class="voice-status" id="voice-status" role="status" aria-live="polite">Tap Speak and say a phrase in English. Microphone access is required; browser speech recognition needs internet and may process audio online.</p>
+
+            <div class="form-footer">
+              <span class="privacy-note"><span class="privacy-lock" aria-hidden="true">⌑</span> Translation runs on this device</span>
+              <button type="submit"><span id="translate-label">Translate</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            </div>
+            <p id="error" class="error" role="alert" hidden></p>
+            <section id="result" class="result" aria-live="polite" hidden>
+              <div class="result-heading">
+                <span id="result-heading">LOCAL LANGUAGE TRANSLATION</span>
+                <button id="speak" class="speak-button" type="button" aria-label="Listen to translation">
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3Zm10-1a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Listen
+                </button>
+              </div>
+              <p id="translation"></p>
+              <p id="method" class="method"></p>
+            </section>
+          </form>
+        </div>
+        <span class="image-credit">Landscape photo via <a href="https://unsplash.com" target="_blank" rel="noreferrer">Unsplash</a></span>
+      </section>
+
+      <section class="emergency-section" id="emergency-support" aria-labelledby="emergency-title">
+        <div class="emergency-copy">
+          <span class="emergency-icon" aria-hidden="true">!</span>
+          <div>
+            <p class="emergency-kicker">TRAVELER SAFETY</p>
+            <h2 id="emergency-title">Need help nearby?</h2>
+            <p>Find nearby police stations or hospitals on Google Maps.</p>
+          </div>
+        </div>
+        <div class="emergency-actions">
+          <a class="emergency-link police-link" data-map-service="police station" href="https://www.google.com/maps/search/?api=1&amp;query=police%20station%20India" target="_blank" rel="noopener noreferrer">
+            <span aria-hidden="true">⌖</span> Police stations <span aria-hidden="true">↗</span>
+          </a>
+          <a class="emergency-link hospital-link" data-map-service="hospital" href="https://www.google.com/maps/search/?api=1&amp;query=hospital%20India" target="_blank" rel="noopener noreferrer">
+            <span aria-hidden="true">✚</span> Hospitals <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <p class="emergency-note" id="emergency-note" role="status" aria-live="polite">Searches use your selected destination area when available; SafarSetu does not access your device location or contact emergency services.</p>
+      </section>
+
+      <section class="quick-phrases" id="phrases" aria-labelledby="quick-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">A GOOD PLACE TO START</p>
+            <h2 id="quick-title">Words for the way</h2>
+            <p class="section-intro">Tap a phrase to get your conversation moving.</p>
+          </div>
+          <span class="language-count"><span class="live-dot" aria-hidden="true"></span> 40+ languages</span>
+        </div>
+        <div class="phrase-list">
+          <button type="button" class="phrase-chip" data-phrase="Where is the railway station?"><span class="phrase-icon" aria-hidden="true">↗</span><span><small>GETTING AROUND</small>Where is the railway station?</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="I need help"><span class="phrase-icon phrase-icon-warm" aria-hidden="true">✳</span><span><small>JUST IN CASE</small>I need help</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="Call an ambulance"><span class="phrase-icon phrase-icon-rose" aria-hidden="true">♡</span><span><small>EMERGENCY</small>Call an ambulance</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="I need a room for tonight"><span class="phrase-icon phrase-icon-blue" aria-hidden="true">⌂</span><span><small>FIND A STAY</small>I need a room for tonight</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="Please show me on the map"><span class="phrase-icon phrase-icon-blue" aria-hidden="true">⌖</span><span><small>FIND YOUR WAY</small>Please show me on the map</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="I am allergic to peanuts"><span class="phrase-icon phrase-icon-warm" aria-hidden="true">✦</span><span><small>AT THE TABLE</small>I am allergic to peanuts</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+        </div>
+      </section>
+
+      <footer>
+        <a class="footer-brand" href="/">SafarSetu<span class="brand-dot">.</span></a>
+        <span>Little words. Wider worlds.</span>
+        <span class="footer-note">For emergencies, contact local authorities directly.</span>
+      </footer>
+    </main>
+    <script>
+      if (!document.documentElement.classList.contains("standalone-file")) {
+        const appScript = document.createElement("script");
+        appScript.src = "/static/app.js";
+        appScript.async = false;
+        document.body.appendChild(appScript);
+      }
+    </script>
+  </body>
+</html>

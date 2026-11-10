@@ -1,0 +1,7 @@
+Flask>=3.0,<4.0
+numpy>=1.26,<3.0
+sacrebleu>=2.4,<3.0
+tensorflow>=2.16,<3.0
+torch>=2.6,<3.0
+transformers>=4.46,<6.0
+sentencepiece>=0.2,<1.0
