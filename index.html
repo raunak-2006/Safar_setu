@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#132522">
+    <title>SafarSetu | Multilingual travel translator</title>
+    <meta name="description" content="Translate travel phrases between 40+ Indian, regional, and world languages with SafarSetu's local AI translator.">
+    <script>
+      if (window.location.protocol === "file:") {
+        document.documentElement.classList.add("standalone-file");
+      } else {
+        const stylesheet = document.createElement("link");
+        stylesheet.rel = "stylesheet";
+        stylesheet.href = "style.css";
+        document.head.appendChild(stylesheet);
+      }
+    </script>
+    <style>
+      .standalone-help { display: none; }
+      html.standalone-file { min-height: 100%; background: #f7f6f1; color: #1d2925; font-family: Arial, sans-serif; }
+      html.standalone-file body { display: grid; min-height: 100vh; place-items: center; margin: 0; padding: 24px; }
+      html.standalone-file .standalone-help { display: block; width: min(560px, 100%); padding: 32px; border: 1px solid #e8e7df; border-radius: 18px; background: white; box-shadow: 0 16px 45px rgb(25 42 35 / 10%); line-height: 1.65; }
+      html.standalone-file .standalone-help h1 { margin-top: 0; color: #15583f; }
+      html.standalone-file .standalone-help code { padding: 3px 6px; border-radius: 5px; background: #edf4ee; }
+      html.standalone-file .standalone-help a { display: inline-block; margin-top: 10px; padding: 10px 15px; border-radius: 8px; background: #1d7554; color: white; font-weight: 700; text-decoration: none; }
+      html.standalone-file .shell { display: none; }
+    </style>
+  </head>
+  <body data-static-demo="true">
+    <section class="standalone-help" aria-labelledby="standalone-title">
+      <h1 id="standalone-title">Open SafarSetu the right way</h1>
+      <p>This file is a Flask template, not a standalone web page. Opening it directly cannot load the language lists, translation service, or app styling.</p>
+      <ol>
+        <li>Open the SafarSetu project folder.</li>
+        <li>Double-click <code>run_safarsetu.bat</code>.</li>
+        <li>Keep the server window open, then use SafarSetu in your browser.</li>
+      </ol>
+      <p>If the app server is already running, open it here:</p>
+      <a href="http://127.0.0.1:5000/">Open SafarSetu</a>
+    </section>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="SafarSetu home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M16 29s10-9.1 10-17A10 10 0 0 0 6 12c0 7.9 10 17 10 17Z" fill="currentColor"/>
+              <path d="M10 14h12m-9 5c0-2 1.3-3.5 3-3.5s3 1.5 3 3.5m-3-3.5V22" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-name">SafarSetu<span class="brand-dot">.</span></span>
+            <span class="brand-tagline">TRAVEL · TRANSLATE · CONNECT</span>
+          </span>
+        </a>
+        <nav class="topbar-right" aria-label="Main navigation">
+          <a class="nav-link" href="#phrases">Phrasebook</a>
+          <span class="language-pill"><span class="live-dot" aria-hidden="true"></span> English <span class="pill-arrow" aria-hidden="true">→</span> <span id="selected-language">हिन्दी</span></span>
+          <a class="sos-nav" href="#emergency-support" aria-label="Open emergency support">SOS</a>
+        </nav>
+      </header>
+
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> THE JOURNEY IS YOURS</p>
+            <h1 id="page-title">Closer to<br>feeling <em>at home.</em></h1>
+            <p class="intro">A few words can take you a long way. Find your voice in any corner of India.</p>
+            <div class="hero-notes">
+              <span><span class="note-icon" aria-hidden="true">✦</span> 40+ language options</span>
+              <span><span class="note-icon shield-icon" aria-hidden="true">✓</span> Hindi phrasebook</span>
+            </div>
+          </div>
+
+          <form id="translate-form" class="translator-card">
+            <div class="card-topline">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5h10M9 3v2.5m3.7 0c-.5 3.7-3.1 6.7-7.2 8.5m1.1-5.3c1.2 2 3.1 3.8 5.4 5.1M15 20l3.5-9 3.5 9m-5.8-2.5h4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <div>
+                <p class="card-kicker">YOUR POCKET INTERPRETER</p>
+                <h2>Say it your way</h2>
+              </div>
+              <span class="card-status"><span class="live-dot"></span> READY</span>
+            </div>
+
+            <div class="language-pair">
+              <div class="language-control destination-control">
+                <label for="destination-area">DESTINATION AREA</label>
+                <div class="select-wrap">
+                  <select id="destination-area" aria-label="Destination area">
+                    <option value="">Choose an area for a language suggestion</option>
+                    <optgroup label="States">
+                      
+                      <option value="Andhra Pradesh" data-language="te">Andhra Pradesh</option>
+                      
+                      <option value="Arunachal Pradesh" data-language="hi">Arunachal Pradesh</option>
+                      
+                      <option value="Assam" data-language="as">Assam</option>
+                      
+                      <option value="Bihar" data-language="hi">Bihar</option>
+                      
+                      <option value="Chhattisgarh" data-language="hne">Chhattisgarh</option>
+                      
+                      <option value="Goa" data-language="mr">Goa</option>
+                      
+                      <option value="Gujarat" data-language="gu">Gujarat</option>
+                      
+                      <option value="Haryana" data-language="hi">Haryana</option>
+                      
+                      <option value="Himachal Pradesh" data-language="hi">Himachal Pradesh</option>
+                      
+                      <option value="Jharkhand" data-language="hi">Jharkhand</option>
+                      
+                      <option value="Karnataka" data-language="kn">Karnataka</option>
+                      
+                      <option value="Kerala" data-language="ml">Kerala</option>
+                      
+                      <option value="Madhya Pradesh" data-language="hi">Madhya Pradesh</option>
+                      
+                      <option value="Maharashtra" data-language="mr">Maharashtra</option>
+                      
+                      <option value="Manipur" data-language="mni">Manipur</option>
+                      
+                      <option value="Meghalaya" data-language="hi">Meghalaya</option>
+                      
+                      <option value="Mizoram" data-language="lus">Mizoram</option>
+                      
+                      <option value="Nagaland" data-language="hi">Nagaland</option>
+                      
+                      <option value="Odisha" data-language="or">Odisha</option>
+                      
+                      <option value="Punjab" data-language="pa">Punjab</option>
+                      
+                      <option value="Rajasthan" data-language="hi">Rajasthan</option>
+                      
+                      <option value="Sikkim" data-language="ne">Sikkim</option>
+                      
+                      <option value="Tamil Nadu" data-language="ta">Tamil Nadu</option>
+                      
+                      <option value="Telangana" data-language="te">Telangana</option>
+                      
+                      <option value="Tripura" data-language="bn">Tripura</option>
+                      
+                      <option value="Uttar Pradesh" data-language="hi">Uttar Pradesh</option>
+                      
+                      <option value="Uttarakhand" data-language="hi">Uttarakhand</option>
+                      
+                      <option value="West Bengal" data-language="bn">West Bengal</option>
+                      
+                    </optgroup>
+                    <optgroup label="Union territories">
+                      
+                      <option value="Andaman and Nicobar Islands" data-language="hi">Andaman and Nicobar Islands</option>
+                      
+                      <option value="Chandigarh" data-language="pa">Chandigarh</option>
+                      
+                      <option value="Dadra and Nagar Haveli and Daman and Diu" data-language="gu">Dadra and Nagar Haveli and Daman and Diu</option>
+                      
+                      <option value="Delhi" data-language="hi">Delhi</option>
+                      
+                      <option value="Jammu and Kashmir" data-language="ur">Jammu and Kashmir</option>
+                      
+                      <option value="Ladakh" data-language="ur">Ladakh</option>
+                      
+                      <option value="Lakshadweep" data-language="ml">Lakshadweep</option>
+                      
+                      <option value="Puducherry" data-language="ta">Puducherry</option>
+                      
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+              <div class="language-control">
+                <label for="target-search">TRANSLATE TO</label>
+                <input class="language-search" id="target-search" type="search" placeholder="Search languages" autocomplete="off">
+                <div class="select-wrap">
+                  <select id="target-language" name="target-language" aria-label="Target language">
+                    
+                    <optgroup label="Indian languages">
+                      
+                      
+                      <option value="hi" data-native-name="हिन्दी"
+                        data-speech-code="hi-IN"
+                        selected>
+                        Hindi — हिन्दी
+                      </option>
+                      
+                      
+                      
+                      <option value="bn" data-native-name="বাংলা"
+                        data-speech-code="bn-IN"
+                        >
+                        Bengali — বাংলা
+                      </option>
+                      
+                      
+                      
+                      <option value="ta" data-native-name="தமிழ்"
+                        data-speech-code="ta-IN"
+                        >
+                        Tamil — தமிழ்
+                      </option>
+                      
+                      
+                      
+                      <option value="te" data-native-name="తెలుగు"
+                        data-speech-code="te-IN"
+                        >
+                        Telugu — తెలుగు
+                      </option>
+                      
+                      
+                      
+                      <option value="mr" data-native-name="मराठी"
+                        data-speech-code="mr-IN"
+                        >
+                        Marathi — मराठी
+                      </option>
+                      
+                      
+                      
+                      <option value="gu" data-native-name="ગુજરાતી"
+                        data-speech-code="gu-IN"
+                        >
+                        Gujarati — ગુજરાતી
+                      </option>
+                      
+                      
+                      
+                      <option value="kn" data-native-name="ಕನ್ನಡ"
+                        data-speech-code="kn-IN"
+                        >
+                        Kannada — ಕನ್ನಡ
+                      </option>
+                      
+                      
+                      
+                      <option value="ml" data-native-name="മലയാളം"
+                        data-speech-code="ml-IN"
+                        >
+                        Malayalam — മലയാളം
+                      </option>
+                      
+                      
+                      
+                      <option value="pa" data-native-name="ਪੰਜਾਬੀ"
+                        data-speech-code="pa-IN"
+                        >
+                        Punjabi — ਪੰਜਾਬੀ
+                      </option>
+                      
+                      
+                      
+                      <option value="ur" data-native-name="اردو"
+                        data-speech-code="ur-IN"
+                        >
+                        Urdu — اردو
+                      </option>
+                      
+                      
+                      
+                      <option value="or" data-native-name="ଓଡ଼ିଆ"
+                        data-speech-code="or-IN"
+                        >
+                        Odia — ଓଡ଼ିଆ
+                      </option>
+                      
+                      
+                      
+                      <option value="as" data-native-name="অসমীয়া"
+                        data-speech-code="as-IN"
+                        >
+                        Assamese — অসমীয়া
+                      </option>
+                      
+                      
+                      
+                      <option value="sa" data-native-name="संस्कृतम्"
+                        data-speech-code="sa-IN"
+                        >
+                        Sanskrit — संस्कृतम्
+                      </option>
+                      
+                      
+                      
+                      <option value="ks" data-native-name="कॉशुर"
+                        data-speech-code="ks-IN"
+                        >
+                        Kashmiri — कॉशुर
+                      </option>
+                      
+                      
+                      
+                      <option value="sd" data-native-name="سنڌي"
+                        data-speech-code="sd-IN"
+                        >
+                        Sindhi — سنڌي
+                      </option>
+                      
+                      
+                      
+                      <option value="bho" data-native-name="भोजपुरी"
+                        data-speech-code="bho-IN"
+                        >
+                        Bhojpuri — भोजपुरी
+                      </option>
+                      
+                      
+                      
+                      <option value="mai" data-native-name="मैथिली"
+                        data-speech-code="mai-IN"
+                        >
+                        Maithili — मैथिली
+                      </option>
+                      
+                      
+                      
+                      <option value="awa" data-native-name="अवधी"
+                        data-speech-code="awa-IN"
+                        >
+                        Awadhi — अवधी
+                      </option>
+                      
+                      
+                      
+                      <option value="hne" data-native-name="छत्तीसगढ़ी"
+                        data-speech-code="hne-IN"
+                        >
+                        Chhattisgarhi — छत्तीसगढ़ी
+                      </option>
+                      
+                      
+                      
+                      <option value="sat" data-native-name="ᱥᱟᱱᱛᱟᱲᱤ"
+                        data-speech-code="sat-IN"
+                        >
+                        Santali — ᱥᱟᱱᱛᱟᱲᱤ
+                      </option>
+                      
+                      
+                      
+                      <option value="mni" data-native-name="মৈতৈলোন্"
+                        data-speech-code="mni-IN"
+                        >
+                        Manipuri — মৈতৈলোন্
+                      </option>
+                      
+                      
+                      
+                      <option value="lus" data-native-name="Mizo"
+                        data-speech-code="lus-IN"
+                        >
+                        Mizo — Mizo
+                      </option>
+                      
+                      
+                      
+                      <option value="mag" data-native-name="मगही"
+                        data-speech-code="mag-IN"
+                        >
+                        Magahi — मगही
+                      </option>
+                      
+                      
+                      
+                      <option value="ne" data-native-name="नेपाली"
+                        data-speech-code="ne-NP"
+                        >
+                        Nepali — नेपाली
+                      </option>
+                      
+                      
+                    </optgroup>
+                    
+                    <optgroup label="South &amp; East Asia">
+                      
+                      
+                      <option value="si" data-native-name="සිංහල"
+                        data-speech-code="si-LK"
+                        >
+                        Sinhala — සිංහල
+                      </option>
+                      
+                      
+                      
+                      <option value="ps" data-native-name="پښتو"
+                        data-speech-code="ps-AF"
+                        >
+                        Pashto — پښتو
+                      </option>
+                      
+                      
+                      
+                      <option value="my" data-native-name="မြန်မာ"
+                        data-speech-code="my-MM"
+                        >
+                        Burmese — မြန်မာ
+                      </option>
+                      
+                      
+                      
+                      <option value="th" data-native-name="ไทย"
+                        data-speech-code="th-TH"
+                        >
+                        Thai — ไทย
+                      </option>
+                      
+                      
+                      
+                      <option value="ms" data-native-name="Bahasa Melayu"
+                        data-speech-code="ms-MY"
+                        >
+                        Malay — Bahasa Melayu
+                      </option>
+                      
+                      
+                      
+                      <option value="id" data-native-name="Bahasa Indonesia"
+                        data-speech-code="id-ID"
+                        >
+                        Indonesian — Bahasa Indonesia
+                      </option>
+                      
+                      
+                    </optgroup>
+                    
+                    <optgroup label="World languages">
+                      
+                      
+                      <option value="ar" data-native-name="العربية"
+                        data-speech-code="ar-SA"
+                        >
+                        Arabic — العربية
+                      </option>
+                      
+                      
+                      
+                      <option value="fa" data-native-name="فارسی"
+                        data-speech-code="fa-IR"
+                        >
+                        Persian — فارسی
+                      </option>
+                      
+                      
+                      
+                      <option value="zh" data-native-name="简体中文"
+                        data-speech-code="zh-CN"
+                        >
+                        Chinese (Simplified) — 简体中文
+                      </option>
+                      
+                      
+                      
+                      <option value="ja" data-native-name="日本語"
+                        data-speech-code="ja-JP"
+                        >
+                        Japanese — 日本語
+                      </option>
+                      
+                      
+                      
+                      <option value="ko" data-native-name="한국어"
+                        data-speech-code="ko-KR"
+                        >
+                        Korean — 한국어
+                      </option>
+                      
+                      
+                      
+                      <option value="fr" data-native-name="Français"
+                        data-speech-code="fr-FR"
+                        >
+                        French — Français
+                      </option>
+                      
+                      
+                      
+                      <option value="es" data-native-name="Español"
+                        data-speech-code="es-ES"
+                        >
+                        Spanish — Español
+                      </option>
+                      
+                      
+                      
+                      <option value="de" data-native-name="Deutsch"
+                        data-speech-code="de-DE"
+                        >
+                        German — Deutsch
+                      </option>
+                      
+                      
+                      
+                      <option value="ru" data-native-name="Русский"
+                        data-speech-code="ru-RU"
+                        >
+                        Russian — Русский
+                      </option>
+                      
+                      
+                      
+                      <option value="pt" data-native-name="Português"
+                        data-speech-code="pt-PT"
+                        >
+                        Portuguese — Português
+                      </option>
+                      
+                      
+                      
+                      
+                    </optgroup>
+                    
+                  </select>
+                </div>
+              </div>
+            </div>
+            <p class="area-hint" id="area-hint">Choose a destination area for a language suggestion, or select any language directly. Local languages can vary within an area.</p>
+            <p class="area-hint" id="static-demo-notice" hidden>GitHub Pages supports exact Hindi phrasebook matches only. Run the Flask app for AI translations.</p>
+
+            <div class="phrase-label-row">
+              <label for="phrase">YOUR PHRASE</label>
+              <div class="phrase-actions">
+                <button class="voice-button" id="voice-assistant" type="button" aria-pressed="false" aria-describedby="voice-status">
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="7" y="2.5" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 9.5a5.5 5.5 0 0 0 11 0M10 15v2.5m-3 0h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  <span id="voice-label">Speak</span>
+                </button>
+                <button class="clear-button" id="clear-phrase" type="button">Clear</button>
+              </div>
+            </div>
+            <div class="textarea-wrap">
+              <textarea id="phrase" name="phrase" rows="3" maxlength="300"
+                placeholder="Where is the nearest station?" required></textarea>
+              <span class="textarea-count" id="character-count">0 / 300</span>
+            </div>
+            <p class="voice-status" id="voice-status" role="status" aria-live="polite">Tap Speak and say a phrase in English. Microphone access is required; browser speech recognition needs internet and may process audio online.</p>
+
+            <div class="form-footer">
+              <span class="privacy-note"><span class="privacy-lock" aria-hidden="true">⌑</span> Translation runs on this device</span>
+              <button type="submit"><span id="translate-label">Translate</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            </div>
+            <p id="error" class="error" role="alert" hidden></p>
+            <section id="result" class="result" aria-live="polite" hidden>
+              <div class="result-heading">
+                <span id="result-heading">LOCAL LANGUAGE TRANSLATION</span>
+                <button id="speak" class="speak-button" type="button" aria-label="Listen to translation">
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3Zm10-1a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Listen
+                </button>
+              </div>
+              <p id="translation"></p>
+              <p id="method" class="method"></p>
+            </section>
+          </form>
+        </div>
+        <span class="image-credit">Landscape photo via <a href="https://unsplash.com" target="_blank" rel="noreferrer">Unsplash</a></span>
+      </section>
+
+      <section class="emergency-section" id="emergency-support" aria-labelledby="emergency-title">
+        <div class="emergency-copy">
+          <span class="emergency-icon" aria-hidden="true">!</span>
+          <div>
+            <p class="emergency-kicker">TRAVELER SAFETY</p>
+            <h2 id="emergency-title">Need help nearby?</h2>
+            <p>Find nearby police stations or hospitals on Google Maps.</p>
+          </div>
+        </div>
+        <div class="emergency-actions">
+          <a class="emergency-link police-link" data-map-service="police station" href="https://www.google.com/maps/search/?api=1&amp;query=police%20station%20India" target="_blank" rel="noopener noreferrer">
+            <span aria-hidden="true">⌖</span> Police stations <span aria-hidden="true">↗</span>
+          </a>
+          <a class="emergency-link hospital-link" data-map-service="hospital" href="https://www.google.com/maps/search/?api=1&amp;query=hospital%20India" target="_blank" rel="noopener noreferrer">
+            <span aria-hidden="true">✚</span> Hospitals <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <p class="emergency-note" id="emergency-note" role="status" aria-live="polite">Searches use your selected destination area when available; SafarSetu does not access your device location or contact emergency services.</p>
+      </section>
+
+      <section class="quick-phrases" id="phrases" aria-labelledby="quick-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">A GOOD PLACE TO START</p>
+            <h2 id="quick-title">Words for the way</h2>
+            <p class="section-intro">Tap a phrase to get your conversation moving.</p>
+          </div>
+          <span class="language-count"><span class="live-dot" aria-hidden="true"></span> 40+ language options</span>
+        </div>
+        <div class="phrase-list">
+          <button type="button" class="phrase-chip" data-phrase="Where is the railway station?"><span class="phrase-icon" aria-hidden="true">↗</span><span><small>GETTING AROUND</small>Where is the railway station?</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="I need help"><span class="phrase-icon phrase-icon-warm" aria-hidden="true">✳</span><span><small>JUST IN CASE</small>I need help</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="Call an ambulance"><span class="phrase-icon phrase-icon-rose" aria-hidden="true">♡</span><span><small>EMERGENCY</small>Call an ambulance</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="I need a room for tonight"><span class="phrase-icon phrase-icon-blue" aria-hidden="true">⌂</span><span><small>FIND A STAY</small>I need a room for tonight</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="Please show me on the map"><span class="phrase-icon phrase-icon-blue" aria-hidden="true">⌖</span><span><small>FIND YOUR WAY</small>Please show me on the map</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+          <button type="button" class="phrase-chip" data-phrase="I am allergic to peanuts"><span class="phrase-icon phrase-icon-warm" aria-hidden="true">✦</span><span><small>AT THE TABLE</small>I am allergic to peanuts</span><span class="chip-arrow" aria-hidden="true">↗</span></button>
+        </div>
+      </section>
+
+      <footer>
+        <a class="footer-brand" href="./">SafarSetu<span class="brand-dot">.</span></a>
+        <span>Little words. Wider worlds.</span>
+        <span class="footer-note">For emergencies, contact local authorities directly.</span>
+      </footer>
+    </main>
+    <script id="offline-phrasebooks" type="application/json">{"hi": {"entries": [{"category": "Essentials", "english": "Hello", "translation": "\u0928\u092e\u0938\u094d\u0924\u0947"}, {"category": "Essentials", "english": "Good morning", "translation": "\u0938\u0941\u092a\u094d\u0930\u092d\u093e\u0924"}, {"category": "Essentials", "english": "Thank you", "translation": "\u0927\u0928\u094d\u092f\u0935\u093e\u0926"}, {"category": "Essentials", "english": "Please", "translation": "\u0915\u0943\u092a\u092f\u093e"}, {"category": "Essentials", "english": "Excuse me", "translation": "\u092e\u093e\u092b\u093c \u0915\u0940\u091c\u093f\u090f"}, {"category": "Essentials", "english": "Yes", "translation": "\u0939\u093e\u0901"}, {"category": "Essentials", "english": "No", "translation": "\u0928\u0939\u0940\u0902"}, {"category": "Essentials", "english": "I do not understand", "translation": "\u092e\u0941\u091d\u0947 \u0938\u092e\u091d \u0928\u0939\u0940\u0902 \u0906\u092f\u093e"}, {"category": "Essentials", "english": "Do you speak English", "translation": "\u0915\u094d\u092f\u093e \u0906\u092a \u0905\u0902\u0917\u094d\u0930\u0947\u091c\u093c\u0940 \u092c\u094b\u0932\u0924\u0947 \u0939\u0948\u0902"}, {"category": "Essentials", "english": "Please speak slowly", "translation": "\u0915\u0943\u092a\u092f\u093e \u0927\u0940\u0930\u0947 \u092c\u094b\u0932\u093f\u090f"}, {"category": "Directions \u0026 transport", "english": "Where is the railway station", "translation": "\u0930\u0947\u0932\u0935\u0947 \u0938\u094d\u091f\u0947\u0936\u0928 \u0915\u0939\u093e\u0901 \u0939\u0948"}, {"category": "Directions \u0026 transport", "english": "Where is the bus station", "translation": "\u092c\u0938 \u0938\u094d\u091f\u0947\u0936\u0928 \u0915\u0939\u093e\u0901 \u0939\u0948"}, {"category": "Directions \u0026 transport", "english": "Where is the airport", "translation": "\u0939\u0935\u093e\u0908 \u0905\u0921\u094d\u0921\u093e \u0915\u0939\u093e\u0901 \u0939\u0948"}, {"category": "Medical", "english": "Where is the nearest hospital", "translation": "\u0938\u092c\u0938\u0947 \u0928\u091c\u093c\u0926\u0940\u0915\u0940 \u0905\u0938\u094d\u092a\u0924\u093e\u0932 \u0915\u0939\u093e\u0901 \u0939\u0948"}, {"category": "Police \u0026 safety", "english": "Where is the police station", "translation": "\u092a\u0941\u0932\u093f\u0938 \u0938\u094d\u091f\u0947\u0936\u0928 \u0915\u0939\u093e\u0901 \u0939\u0948"}, {"category": "Hotel \u0026 stays", "english": "Where is the restroom", "translation": "\u0936\u094c\u091a\u093e\u0932\u092f \u0915\u0939\u093e\u0901 \u0939\u0948"}, {"category": "Directions \u0026 transport", "english": "How do I get to the city centre", "translation": "\u092e\u0948\u0902 \u0936\u0939\u0930 \u0915\u0947 \u0915\u0947\u0902\u0926\u094d\u0930 \u0924\u0915 \u0915\u0948\u0938\u0947 \u092a\u0939\u0941\u0901\u091a\u0942\u0901"}, {"category": "Directions \u0026 transport", "english": "Is this the right way", "translation": "\u0915\u094d\u092f\u093e \u092f\u0939 \u0938\u0939\u0940 \u0930\u093e\u0938\u094d\u0924\u093e \u0939\u0948"}, {"category": "Directions \u0026 transport", "english": "Please show me on the map", "translation": "\u0915\u0943\u092a\u092f\u093e \u092e\u0941\u091d\u0947 \u0928\u0915\u094d\u0936\u0947 \u092a\u0930 \u0926\u093f\u0916\u093e\u0907\u090f"}, {"category": "Directions \u0026 transport", "english": "How far is it", "translation": "\u092f\u0939 \u0915\u093f\u0924\u0928\u0940 \u0926\u0942\u0930 \u0939\u0948"}, {"category": "Directions \u0026 transport", "english": "Turn left", "translation": "\u092c\u093e\u090f\u0901 \u092e\u0941\u0921\u093c\u093f\u090f"}, {"category": "Directions \u0026 transport", "english": "Turn right", "translation": "\u0926\u093e\u090f\u0901 \u092e\u0941\u0921\u093c\u093f\u090f"}, {"category": "Directions \u0026 transport", "english": "Go straight", "translation": "\u0938\u0940\u0927\u0947 \u091c\u093e\u0907\u090f"}, {"category": "Directions \u0026 transport", "english": "Stop here please", "translation": "\u0915\u0943\u092a\u092f\u093e \u092f\u0939\u093e\u0901 \u0930\u0941\u0915\u093f\u090f"}, {"category": "Directions \u0026 transport", "english": "Please call a taxi", "translation": "\u0915\u0943\u092a\u092f\u093e \u091f\u0948\u0915\u094d\u0938\u0940 \u092c\u0941\u0932\u093e\u0907\u090f"}, {"category": "Directions \u0026 transport", "english": "Please take me to this address", "translation": "\u0915\u0943\u092a\u092f\u093e \u092e\u0941\u091d\u0947 \u0907\u0938 \u092a\u0924\u0947 \u092a\u0930 \u0932\u0947 \u091a\u0932\u093f\u090f"}, {"category": "Directions \u0026 transport", "english": "How much is the fare", "translation": "\u0915\u093f\u0930\u093e\u092f\u093e \u0915\u093f\u0924\u0928\u093e \u0939\u0948"}, {"category": "Directions \u0026 transport", "english": "I need a ticket to Delhi", "translation": "\u092e\u0941\u091d\u0947 \u0926\u093f\u0932\u094d\u0932\u0940 \u0915\u093e \u091f\u093f\u0915\u091f \u091a\u093e\u0939\u093f\u090f"}, {"category": "Directions \u0026 transport", "english": "One ticket please", "translation": "\u0915\u0943\u092a\u092f\u093e \u090f\u0915 \u091f\u093f\u0915\u091f \u0926\u0940\u091c\u093f\u090f"}, {"category": "Directions \u0026 transport", "english": "When does the train leave", "translation": "\u091f\u094d\u0930\u0947\u0928 \u0915\u092c \u0928\u093f\u0915\u0932\u0924\u0940 \u0939\u0948"}, {"category": "Directions \u0026 transport", "english": "Which platform", "translation": "\u0915\u094c\u0928 \u0938\u093e \u092a\u094d\u0932\u0947\u091f\u092b\u093c\u0949\u0930\u094d\u092e"}, {"category": "Hotel \u0026 stays", "english": "I have a reservation", "translation": "\u092e\u0947\u0930\u0940 \u092c\u0941\u0915\u093f\u0902\u0917 \u0939\u0948"}, {"category": "Hotel \u0026 stays", "english": "I need a room for tonight", "translation": "\u092e\u0941\u091d\u0947 \u0906\u091c \u0930\u093e\u0924 \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u0915\u092e\u0930\u093e \u091a\u093e\u0939\u093f\u090f"}, {"category": "Hotel \u0026 stays", "english": "Is breakfast included", "translation": "\u0915\u094d\u092f\u093e \u0928\u093e\u0936\u094d\u0924\u093e \u0936\u093e\u092e\u093f\u0932 \u0939\u0948"}, {"category": "Food \u0026 dining", "english": "Can I see the menu", "translation": "\u0915\u094d\u092f\u093e \u092e\u0948\u0902 \u092e\u0947\u0928\u094d\u092f\u0942 \u0926\u0947\u0916 \u0938\u0915\u0924\u093e \u0939\u0942\u0901"}, {"category": "Food \u0026 dining", "english": "I would like water", "translation": "\u092e\u0941\u091d\u0947 \u092a\u093e\u0928\u0940 \u091a\u093e\u0939\u093f\u090f"}, {"category": "Food \u0026 dining", "english": "I am vegetarian", "translation": "\u092e\u0948\u0902 \u0936\u093e\u0915\u093e\u0939\u093e\u0930\u0940 \u0939\u0942\u0901"}, {"category": "Food \u0026 dining", "english": "I am allergic to peanuts", "translation": "\u092e\u0941\u091d\u0947 \u092e\u0942\u0901\u0917\u092b\u0932\u0940 \u0938\u0947 \u090f\u0932\u0930\u094d\u091c\u0940 \u0939\u0948"}, {"category": "Food \u0026 dining", "english": "The food is too spicy", "translation": "\u0916\u093e\u0928\u093e \u092c\u0939\u0941\u0924 \u0924\u0940\u0916\u093e \u0939\u0948"}, {"category": "Food \u0026 dining", "english": "The bill please", "translation": "\u0915\u0943\u092a\u092f\u093e \u092c\u093f\u0932 \u0926\u0940\u091c\u093f\u090f"}, {"category": "Police \u0026 safety", "english": "I need help", "translation": "\u092e\u0941\u091d\u0947 \u092e\u0926\u0926 \u091a\u093e\u0939\u093f\u090f"}, {"category": "Police \u0026 safety", "english": "Please help me", "translation": "\u0915\u0943\u092a\u092f\u093e \u092e\u0947\u0930\u0940 \u092e\u0926\u0926 \u0915\u0940\u091c\u093f\u090f"}, {"category": "Police \u0026 safety", "english": "Call the police", "translation": "\u092a\u0941\u0932\u093f\u0938 \u0915\u094b \u092c\u0941\u0932\u093e\u0907\u090f"}, {"category": "Medical", "english": "Call an ambulance", "translation": "\u090f\u092e\u094d\u092c\u0941\u0932\u0947\u0902\u0938 \u092c\u0941\u0932\u093e\u0907\u090f"}, {"category": "Medical", "english": "I need a doctor", "translation": "\u092e\u0941\u091d\u0947 \u0921\u0949\u0915\u094d\u091f\u0930 \u091a\u093e\u0939\u093f\u090f"}, {"category": "Police \u0026 safety", "english": "I am lost", "translation": "\u092e\u0948\u0902 \u0930\u093e\u0938\u094d\u0924\u093e \u092d\u091f\u0915 \u0917\u092f\u093e \u0939\u0942\u0901"}, {"category": "Police \u0026 safety", "english": "I have lost my passport", "translation": "\u092e\u0947\u0930\u093e \u092a\u093e\u0938\u092a\u094b\u0930\u094d\u091f \u0916\u094b \u0917\u092f\u093e \u0939\u0948"}, {"category": "Police \u0026 safety", "english": "My phone was stolen", "translation": "\u092e\u0947\u0930\u093e \u092b\u093c\u094b\u0928 \u091a\u094b\u0930\u0940 \u0939\u094b \u0917\u092f\u093e \u0939\u0948"}, {"category": "Police \u0026 safety", "english": "I do not feel safe", "translation": "\u092e\u0948\u0902 \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u092e\u0939\u0938\u0942\u0938 \u0928\u0939\u0940\u0902 \u0915\u0930 \u0930\u0939\u093e \u0939\u0942\u0901"}, {"category": "Police \u0026 safety", "english": "Please call my family", "translation": "\u0915\u0943\u092a\u092f\u093e \u092e\u0947\u0930\u0947 \u092a\u0930\u093f\u0935\u093e\u0930 \u0915\u094b \u092b\u093c\u094b\u0928 \u0915\u0940\u091c\u093f\u090f"}, {"category": "Medical", "english": "I need medicine", "translation": "\u092e\u0941\u091d\u0947 \u0926\u0935\u093e \u091a\u093e\u0939\u093f\u090f"}, {"category": "Medical", "english": "I am hurt", "translation": "\u092e\u0941\u091d\u0947 \u091a\u094b\u091f \u0932\u0917\u0940 \u0939\u0948"}], "language_code": "hi"}}</script>
+    <script>
+      if (!document.documentElement.classList.contains("standalone-file")) {
+        const appScript = document.createElement("script");
+        appScript.src = "app.js";
+        appScript.async = false;
+        document.body.appendChild(appScript);
+      }
+    </script>
+  </body>
+</html>

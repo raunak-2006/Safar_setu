@@ -16,11 +16,19 @@ const submitLabel = document.querySelector("#translate-label");
 const voiceButton = document.querySelector("#voice-assistant");
 const voiceLabel = document.querySelector("#voice-label");
 const voiceStatus = document.querySelector("#voice-status");
+const offlinePhrasebooks = JSON.parse(
+  document.querySelector("#offline-phrasebooks")?.textContent || "{}",
+);
+const staticDemo = document.body.dataset.staticDemo === "true";
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 let isListening = false;
 let speakAfterTranslation = false;
 let recognitionHasResult = false;
+
+function normalizePhrase(text) {
+  return text.toLowerCase().replace(/[^\w\s]/g, " ").trim().replace(/\s+/g, " ");
+}
 
 function updateSelectedLanguage() {
   const targetOption = languageSelect.selectedOptions[0];
@@ -109,6 +117,11 @@ function speakCurrentTranslation(automatic = false) {
 
 languageSelect.addEventListener("change", updateSelectedLanguage);
 updateSelectedLanguage();
+
+if (staticDemo) {
+  document.querySelector("#static-demo-notice").hidden = false;
+  document.querySelector(".privacy-note").textContent = "Hindi phrasebook runs in this page";
+}
 
 areaSelect.addEventListener("change", () => {
   updateEmergencyLinks();
@@ -224,18 +237,39 @@ form.addEventListener("submit", async (event) => {
   submitLabel.textContent = "Translating…";
 
   try {
-    const response = await fetch("/api/translate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: phraseInput.value,
-        source_language: "en",
-        target_language: languageSelect.value,
-      }),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || "Unable to translate this phrase.");
+    let data;
+    if (staticDemo) {
+      const entries = offlinePhrasebooks[languageSelect.value]?.entries || [];
+      const normalizedPhrase = normalizePhrase(phraseInput.value);
+      const match = entries.find(
+        (entry) => normalizePhrase(entry.english) === normalizedPhrase,
+      );
+      if (!match) {
+        throw new Error(
+          languageSelect.value === "hi"
+            ? "No exact Hindi phrasebook match. Try a phrase from the phrasebook."
+            : "GitHub Pages supports exact Hindi phrasebook matches only. Run the Flask app for AI translations.",
+        );
+      }
+      data = {
+        translation: match.translation,
+        message: "Exact Hindi phrasebook match. Verify important translations with a fluent speaker.",
+        speech_code: languageSelect.selectedOptions[0].dataset.speechCode,
+      };
+    } else {
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: phraseInput.value,
+          source_language: "en",
+          target_language: languageSelect.value,
+        }),
+      });
+      data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to translate this phrase.");
+      }
     }
 
     if (!data.translation) {

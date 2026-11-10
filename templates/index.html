@@ -126,6 +126,7 @@
               </div>
             </div>
             <p class="area-hint" id="area-hint">Choose a destination area for a language suggestion, or select any language directly. Local languages can vary within an area.</p>
+            <p class="area-hint" id="static-demo-notice" hidden>GitHub Pages supports exact Hindi phrasebook matches only. Run the Flask app for AI translations.</p>
 
             <div class="phrase-label-row">
               <label for="phrase">YOUR PHRASE</label>
@@ -210,6 +211,7 @@
         <span class="footer-note">For emergencies, contact local authorities directly.</span>
       </footer>
     </main>
+    <script id="offline-phrasebooks" type="application/json">{{ offline_phrasebooks|tojson }}</script>
     <script>
       if (!document.documentElement.classList.contains("standalone-file")) {
         const appScript = document.createElement("script");

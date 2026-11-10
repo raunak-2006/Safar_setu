@@ -30,6 +30,16 @@ python app.py
 
 Open `http://127.0.0.1:5000`, choose your destination area for a language suggestion (or select a target language directly), enter or speak an English phrase, and translate. Area suggestions are a starting point only; many areas are multilingual and not every local language is included. The first AI translation requires an internet connection to download the model. Once cached, model inference runs locally. Exact Hindi phrase-book matches do not require the model.
 
+## GitHub Pages demo
+
+GitHub Pages serves static files and cannot run the Flask server or its AI translation API. The root `index.html` is a static demo that supports exact Hindi phrasebook matches; AI translations require the Flask app. To rebuild the static page and its root-level assets after changing the interface, run:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\build_pages.py
+```
+
+Configure GitHub Pages to deploy branch `main` from the repository root.
+
 ## Train and evaluate
 
 For the CO2 seq2seq/attention experiment, review and expand `data/travel_phrases.csv`, then run:
